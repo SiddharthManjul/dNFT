@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DerivativeDraft {
+  id          String   @id @default(cuid())
+  wallet      String   // Wallet address of the user
+  baseNFT     String   // Base NFT contract address
+  baseTokenId String   // Base NFT token ID
+  imageURL    String   // Generated image URL (IPFS or local)
+  prompt      String   // AI generation prompt/style used
+  name        String   // Generated NFT name
+  description String   // Generated NFT description
+  metadata    Json?    // Additional metadata as JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([wallet])
+  @@index([baseNFT, baseTokenId])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  wallet    String   @unique
+  username  String?
+  email     String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([wallet])
+}
+
+model MintedNFT {
+  id                String   @id @default(cuid())
+  tokenId           String   // On-chain token ID
+  contractAddress   String   // Contract address where minted
+  wallet            String   // Owner wallet address
+  baseNFT           String   // Base NFT contract address
+  baseTokenId       String   // Base NFT token ID
+  name              String
+  description       String
+  imageURL          String   // IPFS URL of the image
+  metadataURL       String   // IPFS URL of the metadata JSON
+  transactionHash   String   // Mint transaction hash
+  blockNumber       Int?     // Block number of mint
+  mintedAt          DateTime @default(now())
+
+  @@index([wallet])
+  @@index([contractAddress])
+  @@index([baseNFT, baseTokenId])
+}
+
+model MarketplaceListing {
+  id              String   @id @default(cuid())
+  listingId       String   @unique // On-chain listing ID
+  nftContract     String   // NFT contract address
+  tokenId         String   // NFT token ID
+  seller          String   // Seller wallet address
+  price           String   // Price in wei (stored as string to handle big numbers)
+  active          Boolean  @default(true)
+  baseNFTAddress  String?  // Base NFT for provenance
+  baseTokenId     String?  // Base NFT token ID for provenance
+  transactionHash String?  // Listing transaction hash
+  listedAt        DateTime @default(now())
+  soldAt          DateTime?
+  buyer           String?  // Buyer wallet address when sold
+
+  @@index([seller])
+  @@index([nftContract, tokenId])
+  @@index([active])
+}

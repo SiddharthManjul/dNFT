@@ -1,0 +1,34 @@
+{
+  "name": "vials",
+  "version": "1.0.0",
+  "description": "AI-powered NFT Derivative Generator & Marketplace",
+  "keywords": ["nft", "ai", "web3", "arbitrum", "derivatives", "marketplace"],
+  "author": "Vials Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm start",
+    "lint": "cd frontend && npm run lint",
+    "test": "forge test",
+    "compile": "forge build",
+    "deploy": "forge script script/Deploy.s.sol --rpc-url arbitrum_sepolia --broadcast --verify",
+    "setup": "npm run install-deps && npm run compile && npm run setup-db",
+    "install-deps": "forge install && cd frontend && npm install",
+    "setup-db": "cd frontend && npx prisma generate && npx prisma db push",
+    "clean": "forge clean && cd frontend && rm -rf .next node_modules"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/vials.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/vials/issues"
+  },
+  "homepage": "https://github.com/your-username/vials#readme"
+}
