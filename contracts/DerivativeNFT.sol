@@ -4,15 +4,12 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-
 /**
  * @title DerivativeNFT
  * @dev ERC721 contract for minting derivative NFTs with base NFT provenance tracking
  */
 contract DerivativeNFT is ERC721, ERC721URIStorage, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
 
     struct DerivativeMetadata {
         string name;
@@ -41,7 +38,7 @@ contract DerivativeNFT is ERC721, ERC721URIStorage, Ownable {
     constructor(
         string memory _name,
         string memory _symbol
-    ) ERC721(_name, _symbol) {}
+    ) ERC721(_name, _symbol) Ownable(msg.sender) {}
 
     /**
      * @dev Mint a new derivative NFT
@@ -62,8 +59,8 @@ contract DerivativeNFT is ERC721, ERC721URIStorage, Ownable {
         string memory imageURL,
         string memory tokenURI_
     ) public returns (uint256) {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
 
         // Store derivative metadata
         derivatives[tokenId] = DerivativeMetadata({
@@ -109,7 +106,7 @@ contract DerivativeNFT is ERC721, ERC721URIStorage, Ownable {
     function getDerivativeMetadata(
         uint256 tokenId
     ) public view returns (DerivativeMetadata memory) {
-        require(_exists(tokenId), "DerivativeNFT: token does not exist");
+        require(_ownerOf(tokenId) != address(0), "DerivativeNFT: token does not exist");
         return derivatives[tokenId];
     }
 
@@ -117,13 +114,13 @@ contract DerivativeNFT is ERC721, ERC721URIStorage, Ownable {
      * @dev Get total number of derivatives minted
      */
     function totalSupply() public view returns (uint256) {
-        return _tokenIdCounter.current();
+        return _tokenIdCounter;
     }
 
     /**
      * @dev Override required by Solidity for multiple inheritance
      */
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    function _burn(uint256 tokenId) internal override(ERC721) {
         super._burn(tokenId);
     }
 

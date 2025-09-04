@@ -2,17 +2,16 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-
 /**
  * @title NFTMarketplace
  * @dev Marketplace for buying and selling NFTs with provenance tracking
  */
 contract NFTMarketplace is ReentrancyGuard, Ownable {
-    using Counters for Counters.Counter;
-    Counters.Counter private _listingIdCounter;
+    uint256 private _listingIdCounter;
+
+    constructor() Ownable(msg.sender) {}
 
     struct Listing {
         uint256 listingId;
@@ -94,8 +93,8 @@ contract NFTMarketplace is ReentrancyGuard, Ownable {
         bytes32 nftKey = keccak256(abi.encodePacked(nftContract, tokenId));
         require(nftToListing[nftKey] == 0, "NFT already listed");
 
-        uint256 listingId = _listingIdCounter.current();
-        _listingIdCounter.increment();
+        uint256 listingId = _listingIdCounter;
+        _listingIdCounter++;
 
         listings[listingId] = Listing({
             listingId: listingId,
