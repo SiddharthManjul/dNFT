@@ -4,14 +4,29 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WagmiProvider } from 'wagmi'
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit'
 import { config } from '@/lib/wagmi'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient())
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }))
+
+  // Ensure QueryClient is properly initialized
+  useEffect(() => {
+    if (!queryClient) {
+      console.error('QueryClient not initialized properly')
+    }
+  }, [queryClient])
 
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={config}>
         <RainbowKitProvider
           theme={darkTheme({
             accentColor: '#00ff41',
@@ -23,7 +38,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         >
           {children}
         </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
