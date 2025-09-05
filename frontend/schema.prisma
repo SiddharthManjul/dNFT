@@ -79,4 +79,28 @@ model MarketplaceListing {
   @@index([active])
 }
 
-// NFTTransfer model removed (indexer deleted)
+model NFTTransfer {
+  id               String   @id
+  chainId          Int
+  contractAddress  String
+  tokenId          String
+  fromAddress      String
+  toAddress        String
+  blockNumber      Int
+  blockTimestamp   DateTime
+  transactionHash  String
+  logIndex         Int
+  tokenType        String   // "ERC721" or "ERC1155"
+  operator         String?  // For ERC-1155 transfers
+  value            String?  // For ERC-1155 transfers (amount)
+  batchIndex       Int?     // For ERC-1155 batch transfers
+  createdAt        DateTime @default(now())
+
+  @@index([chainId])
+  @@index([contractAddress])
+  @@index([fromAddress])
+  @@index([toAddress])
+  @@index([blockNumber])
+  @@index([tokenType])
+  @@index([contractAddress, tokenId])
+}

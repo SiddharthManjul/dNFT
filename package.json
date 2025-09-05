@@ -1,45 +1,30 @@
 {
-  "name": "vials",
+  "name": "dnft-frontend",
   "version": "1.0.0",
-  "description": "AI-powered NFT Derivative Generator & Marketplace",
-  "keywords": [
-    "nft",
-    "ai",
-    "web3",
-    "arbitrum",
-    "derivatives",
-    "marketplace"
-  ],
-  "author": "Vials Team",
-  "license": "MIT",
+  "description": "dNFT Frontend Application",
+  "main": "frontend/app/page.tsx",
   "scripts": {
-    "dev": "cd frontend && bun run dev",
+    "dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build",
-    "start": "cd frontend && npm start",
-    "lint": "cd frontend && npm run lint",
-    "test": "forge test",
-    "compile": "forge build",
-    "deploy": "forge script script/Deploy.s.sol --rpc-url arbitrum_sepolia --broadcast --verify",
-    "setup": "npm run install-deps && npm run compile && npm run setup-db",
-    "install-deps": "forge install && cd frontend && npm install",
-    "setup-db": "cd frontend && npx prisma generate && npx prisma db push",
-    "clean": "forge clean && cd frontend && rm -rf .next node_modules"
+    "start": "cd frontend && npm run start",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "prisma": "^5.22.0"
   },
   "devDependencies": {
-    "prisma": "^6.15.0"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-username/vials.git"
-  },
-  "bugs": {
-    "url": "https://github.com/your-username/vials/issues"
-  },
-  "homepage": "https://github.com/your-username/vials#readme",
-  "dependencies": {
-    "@prisma/client": "^6.15.0"
-  }
+  "keywords": [
+    "nft",
+    "frontend",
+    "nextjs",
+    "web3"
+  ],
+  "author": "dNFT Team",
+  "license": "MIT"
 }
