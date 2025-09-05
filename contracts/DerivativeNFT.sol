@@ -117,12 +117,6 @@ contract DerivativeNFT is ERC721, ERC721URIStorage, Ownable {
         return _tokenIdCounter;
     }
 
-    /**
-     * @dev Override required by Solidity for multiple inheritance
-     */
-    function _burn(uint256 tokenId) internal override(ERC721) {
-        super._burn(tokenId);
-    }
 
     /**
      * @dev Override required by Solidity for multiple inheritance

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { WalletConnectButton } from '@/components/WalletConnectButton'
+import { NetworkSelector } from '@/components/NetworkSelector'
 import { shortenAddress, formatPrice } from '@/lib/utils'
 import { Loader2, ShoppingCart, Search, Filter, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
@@ -144,7 +145,10 @@ export default function MarketplacePage() {
             </Link>
           </nav>
           
-          <WalletConnectButton />
+          <div className="flex items-center gap-4">
+            <NetworkSelector />
+            <WalletConnectButton />
+          </div>
         </div>
       </header>
 

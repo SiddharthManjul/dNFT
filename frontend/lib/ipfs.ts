@@ -49,8 +49,8 @@ class IPFSService {
       const result = await this.pinata.upload.file(file)
       
       return {
-        hash: result.IpfsHash,
-        url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`
+        hash: result.cid,
+        url: `https://gateway.pinata.cloud/ipfs/${result.cid}`
       }
     } catch (error) {
       console.error('Error uploading image to IPFS:', error)
@@ -92,8 +92,8 @@ class IPFSService {
       const result = await this.pinata.upload.json(metadata)
       
       return {
-        hash: result.IpfsHash,
-        url: `https://gateway.pinata.cloud/ipfs/${result.IpfsHash}`
+        hash: result.cid,
+        url: `https://gateway.pinata.cloud/ipfs/${result.cid}`
       }
     } catch (error) {
       console.error('Error uploading metadata to IPFS:', error)

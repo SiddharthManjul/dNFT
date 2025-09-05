@@ -2,11 +2,18 @@
   "name": "vials",
   "version": "1.0.0",
   "description": "AI-powered NFT Derivative Generator & Marketplace",
-  "keywords": ["nft", "ai", "web3", "arbitrum", "derivatives", "marketplace"],
+  "keywords": [
+    "nft",
+    "ai",
+    "web3",
+    "arbitrum",
+    "derivatives",
+    "marketplace"
+  ],
   "author": "Vials Team",
   "license": "MIT",
   "scripts": {
-    "dev": "cd frontend && npm run dev",
+    "dev": "cd frontend && bun run dev",
     "build": "cd frontend && npm run build",
     "start": "cd frontend && npm start",
     "lint": "cd frontend && npm run lint",
@@ -18,8 +25,9 @@
     "setup-db": "cd frontend && npx prisma generate && npx prisma db push",
     "clean": "forge clean && cd frontend && rm -rf .next node_modules"
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "prisma": "^6.15.0"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
@@ -30,5 +38,8 @@
   "bugs": {
     "url": "https://github.com/your-username/vials/issues"
   },
-  "homepage": "https://github.com/your-username/vials#readme"
+  "homepage": "https://github.com/your-username/vials#readme",
+  "dependencies": {
+    "@prisma/client": "^6.15.0"
+  }
 }

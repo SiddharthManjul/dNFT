@@ -9,6 +9,7 @@ remappings = [
 
 [rpc_endpoints]
 arbitrum_sepolia = "https://sepolia-rollup.arbitrum.io/rpc"
+monad_testnet = "https://testnet-rpc.monad.xyz"
 
 [etherscan]
 arbitrum_sepolia = { key = "${ARBISCAN_API_KEY}", url = "https://api-sepolia.arbiscan.io/api" }

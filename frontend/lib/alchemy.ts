@@ -30,7 +30,16 @@ export interface AlchemyResponse {
   pageKey?: string
 }
 
-const ALCHEMY_BASE_URL = 'https://arb-sepolia.g.alchemy.com/nft/v3'
+// Network configurations for Alchemy
+const ALCHEMY_NETWORKS = {
+  ethereum: 'https://eth-mainnet.g.alchemy.com/nft/v3',
+  polygon: 'https://polygon-mainnet.g.alchemy.com/nft/v3',
+  arbitrum: 'https://arb-mainnet.g.alchemy.com/nft/v3',
+  arbitrumSepolia: 'https://arb-sepolia.g.alchemy.com/nft/v3',
+  optimism: 'https://opt-mainnet.g.alchemy.com/nft/v3',
+} as const
+
+export type SupportedNetwork = keyof typeof ALCHEMY_NETWORKS
 
 export class AlchemyService {
   private apiKey: string
@@ -44,7 +53,8 @@ export class AlchemyService {
 
   async getNFTsForOwner(
     ownerAddress: string,
-    pageKey?: string
+    pageKey?: string,
+    network: SupportedNetwork = 'arbitrumSepolia'
   ): Promise<AlchemyResponse> {
     if (!this.apiKey) {
       // Return mock data for development
@@ -52,7 +62,8 @@ export class AlchemyService {
     }
 
     try {
-      const url = new URL(`${ALCHEMY_BASE_URL}/${this.apiKey}/getNFTsForOwner`)
+      const baseUrl = ALCHEMY_NETWORKS[network]
+      const url = new URL(`${baseUrl}/${this.apiKey}/getNFTsForOwner`)
       url.searchParams.set('owner', ownerAddress)
       url.searchParams.set('withMetadata', 'true')
       url.searchParams.set('pageSize', '20')
@@ -75,13 +86,18 @@ export class AlchemyService {
     }
   }
 
-  async getNFTMetadata(contractAddress: string, tokenId: string): Promise<AlchemyNFT | null> {
+  async getNFTMetadata(
+    contractAddress: string, 
+    tokenId: string, 
+    network: SupportedNetwork = 'arbitrumSepolia'
+  ): Promise<AlchemyNFT | null> {
     if (!this.apiKey) {
       return null
     }
 
     try {
-      const url = `${ALCHEMY_BASE_URL}/${this.apiKey}/getNFTMetadata`
+      const baseUrl = ALCHEMY_NETWORKS[network]
+      const url = `${baseUrl}/${this.apiKey}/getNFTMetadata`
       const params = new URLSearchParams({
         contractAddress,
         tokenId,
@@ -101,7 +117,16 @@ export class AlchemyService {
   }
 
   private getMockNFTs(): AlchemyResponse {
-    // Mock NFT data for development/testing
+    // Mock NFT data for development/testing using data URIs to avoid network issues
+    const createMockImage = (color: string, text: string) => {
+      // Create a simple SVG data URI
+      const svg = `<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="${color}"/>
+        <text x="200" y="200" font-family="Arial" font-size="24" fill="white" text-anchor="middle" dominant-baseline="middle">${text}</text>
+      </svg>`;
+      return `data:image/svg+xml;base64,${btoa(svg)}`;
+    };
+
     return {
       ownedNfts: [
         {
@@ -113,14 +138,14 @@ export class AlchemyService {
           title: 'Mock NFT #1',
           description: 'A mock NFT for testing purposes',
           media: [{
-            gateway: 'https://via.placeholder.com/400x400/00ff41/000000?text=Mock+NFT+1',
-            raw: 'https://via.placeholder.com/400x400/00ff41/000000?text=Mock+NFT+1',
-            format: 'png'
+            gateway: createMockImage('#00ff41', 'Mock NFT 1'),
+            raw: createMockImage('#00ff41', 'Mock NFT 1'),
+            format: 'svg'
           }],
           metadata: {
             name: 'Mock NFT #1',
             description: 'A mock NFT for testing purposes',
-            image: 'https://via.placeholder.com/400x400/00ff41/000000?text=Mock+NFT+1',
+            image: createMockImage('#00ff41', 'Mock NFT 1'),
             attributes: [
               { trait_type: 'Type', value: 'Mock' },
               { trait_type: 'Rarity', value: 'Common' }
@@ -137,14 +162,14 @@ export class AlchemyService {
           title: 'Mock NFT #2',
           description: 'Another mock NFT for testing',
           media: [{
-            gateway: 'https://via.placeholder.com/400x400/ff007f/000000?text=Mock+NFT+2',
-            raw: 'https://via.placeholder.com/400x400/ff007f/000000?text=Mock+NFT+2',
-            format: 'png'
+            gateway: createMockImage('#ff007f', 'Mock NFT 2'),
+            raw: createMockImage('#ff007f', 'Mock NFT 2'),
+            format: 'svg'
           }],
           metadata: {
             name: 'Mock NFT #2',
             description: 'Another mock NFT for testing',
-            image: 'https://via.placeholder.com/400x400/ff007f/000000?text=Mock+NFT+2',
+            image: createMockImage('#ff007f', 'Mock NFT 2'),
             attributes: [
               { trait_type: 'Type', value: 'Mock' },
               { trait_type: 'Rarity', value: 'Rare' }
@@ -161,14 +186,14 @@ export class AlchemyService {
           title: 'Mock NFT #3',
           description: 'A third mock NFT',
           media: [{
-            gateway: 'https://via.placeholder.com/400x400/00ffff/000000?text=Mock+NFT+3',
-            raw: 'https://via.placeholder.com/400x400/00ffff/000000?text=Mock+NFT+3',
-            format: 'png'
+            gateway: createMockImage('#00ffff', 'Mock NFT 3'),
+            raw: createMockImage('#00ffff', 'Mock NFT 3'),
+            format: 'svg'
           }],
           metadata: {
             name: 'Mock NFT #3',
             description: 'A third mock NFT',
-            image: 'https://via.placeholder.com/400x400/00ffff/000000?text=Mock+NFT+3',
+            image: createMockImage('#00ffff', 'Mock NFT 3'),
             attributes: [
               { trait_type: 'Type', value: 'Mock' },
               { trait_type: 'Rarity', value: 'Epic' }

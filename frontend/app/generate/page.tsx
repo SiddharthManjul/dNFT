@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
 import { WalletConnectButton } from '@/components/WalletConnectButton'
+import { NetworkSelector } from '@/components/NetworkSelector'
 import { aiGenerationService, GeneratedImage } from '@/lib/ai-generation'
 import { AI_STYLES, AIStyle } from '@/lib/utils'
 import { ipfsService } from '@/lib/ipfs'
@@ -169,7 +170,10 @@ export default function GeneratePage() {
               AI Generator
             </h1>
           </div>
-          <WalletConnectButton />
+          <div className="flex items-center gap-4">
+            <NetworkSelector />
+            <WalletConnectButton />
+          </div>
         </div>
       </header>
 

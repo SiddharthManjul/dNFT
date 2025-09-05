@@ -9,7 +9,8 @@ const nextConfig = {
       'ipfs.io',
       'cloudflare-ipfs.com',
       'nftstorage.link',
-      'res.cloudinary.com'
+      'res.cloudinary.com',
+      'via.placeholder.com'
     ],
   },
   webpack: (config) => {

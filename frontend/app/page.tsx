@@ -1,19 +1,22 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WalletConnectButton } from '@/components/WalletConnectButton'
+import { NetworkSelector } from '@/components/NetworkSelector'
 import { NFTCard } from '@/components/NFTCard'
-import { alchemyService, AlchemyNFT } from '@/lib/alchemy'
+import { nftService } from '@/lib/nft-service'
+import { AlchemyNFT } from '@/lib/alchemy'
 import { Loader2, Sparkles, Palette, ShoppingCart } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
   const { address, isConnected } = useAccount()
+  const chainId = useChainId()
   const router = useRouter()
   const [nfts, setNfts] = useState<AlchemyNFT[]>([])
   const [loading, setLoading] = useState(false)
@@ -24,15 +27,17 @@ export default function HomePage() {
       fetchUserNFTs()
       fetchDrafts()
     }
-  }, [isConnected, address])
+  }, [isConnected, address, chainId])
 
   const fetchUserNFTs = async () => {
     if (!address) return
     
     setLoading(true)
     try {
-      const response = await alchemyService.getNFTsForOwner(address)
+      console.log(`Fetching NFTs for chain ID: ${chainId}`)
+      const response = await nftService.getNFTsForOwner(address, { chainId })
       setNfts(response.ownedNfts)
+      console.log(`Found ${response.ownedNfts.length} NFTs`)
     } catch (error) {
       console.error('Error fetching NFTs:', error)
     } finally {
@@ -151,7 +156,10 @@ export default function HomePage() {
             </Link>
           </nav>
           
-          <WalletConnectButton />
+          <div className="flex items-center gap-4">
+            <NetworkSelector />
+            <WalletConnectButton />
+          </div>
         </div>
       </header>
 
@@ -246,9 +254,9 @@ export default function HomePage() {
                             className="w-full h-full object-cover"
                           />
                           <div className="absolute top-2 right-2">
-                            <Badge className="bg-neon-yellow/20 text-neon-yellow border-neon-yellow/50">
+                            <span className="bg-neon-yellow/20 text-neon-yellow border-neon-yellow/50">
                               DRAFT
-                            </Badge>
+                            </span>
                           </div>
                         </div>
                         
