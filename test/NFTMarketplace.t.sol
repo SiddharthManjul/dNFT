@@ -57,14 +57,14 @@ contract NFTMarketplaceTest is Test {
         );
 
         // Check listing details
-        NFTMarketplace.Listing memory listing = marketplace.listings(0);
-        assertEq(listing.nftContract, address(nftContract));
-        assertEq(listing.tokenId, tokenId);
-        assertEq(listing.seller, seller);
-        assertEq(listing.price, LISTING_PRICE);
-        assertTrue(listing.active);
-        assertEq(listing.baseNFTAddress, baseNFTContract);
-        assertEq(listing.baseTokenId, BASE_TOKEN_ID);
+        (uint256 listingId, address nftContract_, uint256 tokenId_, address seller_, uint256 price_, bool active_, uint256 timestamp_, address baseNFTAddress_, uint256 baseTokenId_) = marketplace.listings(0);
+        assertEq(nftContract_, address(nftContract));
+        assertEq(tokenId_, tokenId);
+        assertEq(seller_, seller);
+        assertEq(price_, LISTING_PRICE);
+        assertTrue(active_);
+        assertEq(baseNFTAddress_, baseNFTContract);
+        assertEq(baseTokenId_, BASE_TOKEN_ID);
     }
 
     function testBuyNFT() public {
@@ -102,8 +102,8 @@ contract NFTMarketplaceTest is Test {
         assertEq(nftContract.ownerOf(tokenId), buyer);
 
         // Check listing is inactive
-        NFTMarketplace.Listing memory listing = marketplace.listings(0);
-        assertFalse(listing.active);
+        (, , , , , bool active_, , , ) = marketplace.listings(0);
+        assertFalse(active_);
 
         // Check payments (seller gets 97.5%, marketplace gets 2.5%)
         uint256 expectedMarketplaceFee = (LISTING_PRICE * 250) / 10000; // 2.5%
@@ -142,8 +142,8 @@ contract NFTMarketplaceTest is Test {
         marketplace.cancelListing(0);
 
         // Check listing is inactive
-        NFTMarketplace.Listing memory listing = marketplace.listings(0);
-        assertFalse(listing.active);
+        (, , , , , bool active_, , , ) = marketplace.listings(0);
+        assertFalse(active_);
 
         // NFT should still be with seller
         assertEq(nftContract.ownerOf(tokenId), seller);

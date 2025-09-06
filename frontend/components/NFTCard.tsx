@@ -28,6 +28,14 @@ export function NFTCard({ nft, showActions = true, onGenerate, onView, className
   const name = nft.title || nft.metadata?.name || `NFT #${nft.tokenId}`
   const description = nft.description || nft.metadata?.description || 'No description available'
 
+  // Debug logging for image URLs
+  console.log(`NFT #${nft.tokenId} image sources:`, {
+    mediaGateway: nft.media?.[0]?.gateway,
+    mediaRaw: nft.media?.[0]?.raw,
+    metadataImage: nft.metadata?.image,
+    finalImageUrl: imageUrl
+  })
+
   return (
     <Card className={`nft-card ${className}`}>
       <CardContent className="p-0">
@@ -38,6 +46,17 @@ export function NFTCard({ nft, showActions = true, onGenerate, onView, className
             fill
             className="object-cover transition-transform duration-300 hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            onError={(e) => {
+              console.error(`Failed to load image for NFT #${nft.tokenId}:`, imageUrl)
+              // Set fallback image
+              e.currentTarget.src = 'data:image/svg+xml;base64,' + btoa(`
+                <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="400" height="400" fill="#2a2a2a"/>
+                  <text x="200" y="180" font-family="Arial" font-size="16" fill="#ff6b6b" text-anchor="middle">Image Failed</text>
+                  <text x="200" y="220" font-family="Arial" font-size="24" fill="#00ff41" text-anchor="middle">NFT #${nft.tokenId}</text>
+                </svg>
+              `)
+            }}
           />
           <div className="absolute top-2 right-2 flex gap-1">
             <Badge variant="outline" className="bg-retro-dark/80 text-neon-green border-neon-green/50">

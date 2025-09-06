@@ -66,11 +66,6 @@ deploy-sepolia: ## Deploy contracts to Arbitrum Sepolia
 	@if [ -z "$$PRIVATE_KEY" ]; then echo "❌ PRIVATE_KEY not set"; exit 1; fi
 	forge script script/Deploy.s.sol --rpc-url arbitrum_sepolia --broadcast --verify
 
-deploy-monad: ## Deploy contracts to Monad Testnet
-	@echo "🚀 Deploying to Monad Testnet..."
-	@if [ -z "$$PRIVATE_KEY" ]; then echo "❌ PRIVATE_KEY not set"; exit 1; fi
-	forge script script/DeployMonad.s.sol --rpc-url monad_testnet --broadcast
-
 verify: ## Verify contracts on Arbiscan
 	@echo "✅ Verifying contracts..."
 	@if [ -z "$$CONTRACT_ADDRESS" ]; then echo "❌ CONTRACT_ADDRESS not set"; exit 1; fi

@@ -54,6 +54,37 @@ export class AlchemyService {
     }
   }
 
+  // Convert IPFS URLs to HTTP gateway URLs
+  private convertIpfsUrl(url: string): string {
+    if (!url) return url
+    
+    // Handle different IPFS URL formats
+    if (url.startsWith('ipfs://')) {
+      // ipfs://QmHash -> https://gateway.pinata.cloud/ipfs/QmHash
+      const hash = url.replace('ipfs://', '')
+      // Use multiple gateway options for better reliability
+      return `https://gateway.pinata.cloud/ipfs/${hash}`
+    }
+    
+    if (url.includes('/ipfs/')) {
+      // If it's already a gateway URL but might be slow/unreliable, use Pinata
+      const hashMatch = url.match(/\/ipfs\/([^/?]+)/)
+      if (hashMatch && hashMatch[1]) {
+        return `https://gateway.pinata.cloud/ipfs/${hashMatch[1]}`
+      }
+    }
+    
+    // Handle CrossMint and other IPFS formats
+    if (url.includes('ipfs.io') || url.includes('cloudflare-ipfs.com')) {
+      const hashMatch = url.match(/\/ipfs\/([^/?]+)/)
+      if (hashMatch && hashMatch[1]) {
+        return `https://gateway.pinata.cloud/ipfs/${hashMatch[1]}`
+      }
+    }
+    
+    return url
+  }
+
   async getNFTsForOwner(
     ownerAddress: string,
     pageKey?: string,
@@ -83,12 +114,19 @@ export class AlchemyService {
       const data = await response.json()
       console.log('🔍 Alchemy API Response:', data)
       
-      // Ensure the response has the expected structure
+      // Ensure the response has the expected structure and convert IPFS URLs
       if (data.ownedNfts) {
         data.ownedNfts = data.ownedNfts.map((nft: any) => ({
           ...nft,
-          media: nft.media || [], // Ensure media is always an array
-          metadata: nft.metadata || {}, // Ensure metadata is always an object
+          media: (nft.media || []).map((mediaItem: any) => ({
+            ...mediaItem,
+            gateway: this.convertIpfsUrl(mediaItem.gateway || mediaItem.raw || ''),
+            raw: this.convertIpfsUrl(mediaItem.raw || ''),
+          })),
+          metadata: {
+            ...nft.metadata,
+            image: this.convertIpfsUrl(nft.metadata?.image || ''),
+          },
         }))
       }
       
