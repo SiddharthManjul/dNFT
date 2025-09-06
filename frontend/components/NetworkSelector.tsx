@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
 import { arbitrumSepolia } from 'wagmi/chains'
-import { monadTestnet } from '@/lib/wagmi'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
@@ -15,12 +14,6 @@ const SUPPORTED_NETWORKS = [
     name: 'Arbitrum Sepolia',
     shortName: 'ARB',
     color: 'bg-blue-500',
-  },
-  {
-    chain: monadTestnet,
-    name: 'Monad Testnet',
-    shortName: 'MON',
-    color: 'bg-purple-500',
   },
 ]
 

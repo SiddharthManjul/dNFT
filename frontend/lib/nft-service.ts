@@ -1,4 +1,4 @@
-// Unified NFT service that routes to appropriate indexer based on network
+// NFT service using Alchemy for Arbitrum Sepolia testnet
 import { alchemyService, AlchemyResponse } from './alchemy'
 
 export interface NFTServiceOptions {
@@ -13,43 +13,32 @@ export class NFTService {
   ): Promise<AlchemyResponse> {
     const { chainId } = options
 
-    // Route to appropriate service based on chain ID
+    // Use Alchemy for Arbitrum Sepolia and other supported networks
     switch (chainId) {
-      case 10143: // Monad Testnet
-        console.log('Indexer removed - no NFTs available for Monad Testnet')
-        return { ownedNfts: [], totalCount: 0 }
-      
       case 421614: // Arbitrum Sepolia
-        console.log('Indexer removed - no NFTs available for Arbitrum Sepolia')
-        return { ownedNfts: [], totalCount: 0 }
+        console.log('Fetching NFTs from Arbitrum Sepolia via Alchemy...')
+        return await alchemyService.getNFTsForOwner(ownerAddress, undefined, 'arbitrumSepolia')
       
       case 1: // Ethereum Mainnet
+        console.log('Fetching NFTs from Ethereum via Alchemy...')
+        return await alchemyService.getNFTsForOwner(ownerAddress, undefined, 'ethereum')
+      
       case 137: // Polygon
+        console.log('Fetching NFTs from Polygon via Alchemy...')
+        return await alchemyService.getNFTsForOwner(ownerAddress, undefined, 'polygon')
+      
       case 42161: // Arbitrum One
+        console.log('Fetching NFTs from Arbitrum One via Alchemy...')
+        return await alchemyService.getNFTsForOwner(ownerAddress, undefined, 'arbitrum')
+      
       case 10: // Optimism
-        console.log('Fetching NFTs via Alchemy...')
-        return await alchemyService.getNFTsForOwner(ownerAddress)
+        console.log('Fetching NFTs from Optimism via Alchemy...')
+        return await alchemyService.getNFTsForOwner(ownerAddress, undefined, 'optimism')
       
       default:
-        // If no specific chain ID, try to fetch from multiple networks
-        console.log('Fetching NFTs from Alchemy networks only...')
-        return await this.getMultiChainNFTs(ownerAddress)
-    }
-  }
-
-  private async getMultiChainNFTs(ownerAddress: string): Promise<AlchemyResponse> {
-    try {
-      // Only fetch from Alchemy networks (indexer removed)
-      console.log('Fetching NFTs from Alchemy networks...')
-      return await alchemyService.getNFTsForOwner(ownerAddress)
-    } catch (error) {
-      console.error('Error fetching multi-chain NFTs:', error)
-      
-      // Return empty response
-      return {
-        ownedNfts: [],
-        totalCount: 0
-      }
+        // Default to Arbitrum Sepolia for testnet
+        console.log('Defaulting to Arbitrum Sepolia for NFT fetching...')
+        return await alchemyService.getNFTsForOwner(ownerAddress, undefined, 'arbitrumSepolia')
     }
   }
 
@@ -64,30 +53,12 @@ export class NFTService {
   // Get supported networks
   getSupportedNetworks() {
     return [
+      { chainId: 421614, name: 'Arbitrum Sepolia', service: 'Alchemy' },
       { chainId: 1, name: 'Ethereum', service: 'Alchemy' },
       { chainId: 137, name: 'Polygon', service: 'Alchemy' },
       { chainId: 42161, name: 'Arbitrum One', service: 'Alchemy' },
-      { chainId: 421614, name: 'Arbitrum Sepolia', service: 'None (Indexer Removed)' },
       { chainId: 10, name: 'Optimism', service: 'Alchemy' },
-      { chainId: 10143, name: 'Monad Testnet', service: 'None (Indexer Removed)' },
     ]
-  }
-
-  // Indexer management methods (removed)
-  async getIndexerStatus() {
-    return { running: false, message: 'Indexer removed' }
-  }
-
-  async startIndexer() {
-    return { success: false, message: 'Indexer removed' }
-  }
-
-  async stopIndexer() {
-    return { success: false, message: 'Indexer removed' }
-  }
-
-  async forceIndexing() {
-    return { success: false, message: 'Indexer removed' }
   }
 }
 

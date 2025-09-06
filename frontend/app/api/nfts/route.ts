@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AlchemyResponse, AlchemyNFT } from '../../../lib/alchemy'
+import { nftService } from '../../../lib/nft-service'
 
-// GET /api/nfts?wallet=0x...&chainId=10143
+// GET /api/nfts?wallet=0x...&chainId=421614
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -15,17 +15,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const chainId = chainIdParam ? parseInt(chainIdParam) : undefined
+    const chainId = chainIdParam ? parseInt(chainIdParam) : 421614 // Default to Arbitrum Sepolia
     
     console.log(`📊 NFT API called for wallet: ${walletAddress}, chainId: ${chainId}`)
     
-    // Indexer removed - return empty response
-    const response: AlchemyResponse = {
-      ownedNfts: [],
-      totalCount: 0
-    }
+    // Use NFT service to fetch NFTs via Alchemy
+    const response = await nftService.getNFTsForOwner(walletAddress, { chainId })
 
-    console.log(`📊 Returning 0 NFTs (indexer removed)`);
+    console.log(`📊 Returning ${response.totalCount} NFTs from Alchemy`);
     
     return NextResponse.json({ success: true, data: response })
     

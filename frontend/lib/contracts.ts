@@ -1,12 +1,8 @@
-// Multi-network contract addresses
+// Contract addresses for Arbitrum Sepolia
 export const CONTRACT_ADDRESSES = {
   arbitrum_sepolia: {
     derivativeNFT: process.env.NEXT_PUBLIC_ARBITRUM_DERIVATIVE_NFT_ADDRESS || '',
     marketplace: process.env.NEXT_PUBLIC_ARBITRUM_MARKETPLACE_ADDRESS || '',
-  },
-  monad_testnet: {
-    derivativeNFT: process.env.NEXT_PUBLIC_MONAD_DERIVATIVE_NFT_ADDRESS || '',
-    marketplace: process.env.NEXT_PUBLIC_MONAD_MARKETPLACE_ADDRESS || '',
   }
 } as const
 
@@ -20,8 +16,6 @@ export function getContractAddresses(chainId: number) {
   switch (chainId) {
     case 421614: // Arbitrum Sepolia
       return CONTRACT_ADDRESSES.arbitrum_sepolia
-    case 10143: // Monad Testnet
-      return CONTRACT_ADDRESSES.monad_testnet
     default:
       return CONTRACT_ADDRESSES.arbitrum_sepolia
   }

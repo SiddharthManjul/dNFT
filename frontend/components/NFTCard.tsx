@@ -17,7 +17,14 @@ interface NFTCardProps {
 }
 
 export function NFTCard({ nft, showActions = true, onGenerate, onView, className }: NFTCardProps) {
-  const imageUrl = nft.media[0]?.gateway || nft.metadata?.image || '/placeholder-nft.png'
+  // Safely access media array and fallback to metadata image or placeholder
+  const imageUrl = nft.media?.[0]?.gateway || nft.media?.[0]?.raw || nft.metadata?.image || 
+    'data:image/svg+xml;base64,' + btoa(`
+      <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="#1a1a1a"/>
+        <text x="200" y="200" font-family="Arial" font-size="24" fill="#00ff41" text-anchor="middle" dominant-baseline="middle">NFT #${nft.tokenId}</text>
+      </svg>
+    `)
   const name = nft.title || nft.metadata?.name || `NFT #${nft.tokenId}`
   const description = nft.description || nft.metadata?.description || 'No description available'
 

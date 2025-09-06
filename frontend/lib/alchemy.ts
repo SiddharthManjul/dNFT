@@ -6,13 +6,13 @@ export interface AlchemyNFT {
   tokenType: string
   title: string
   description?: string
-  media: Array<{
-    gateway: string
+  media?: Array<{
+    gateway?: string
     thumbnail?: string
-    raw: string
-    format: string
+    raw?: string
+    format?: string
   }>
-  metadata: {
+  metadata?: {
     name?: string
     description?: string
     image?: string
@@ -48,6 +48,9 @@ export class AlchemyService {
     this.apiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || ''
     if (!this.apiKey) {
       console.warn('Alchemy API key not found. NFT fetching will be limited.')
+      console.warn('Please set NEXT_PUBLIC_ALCHEMY_API_KEY in your .env.local file')
+    } else {
+      console.log('✅ Alchemy API key configured successfully')
     }
   }
 
@@ -78,6 +81,17 @@ export class AlchemyService {
       }
 
       const data = await response.json()
+      console.log('🔍 Alchemy API Response:', data)
+      
+      // Ensure the response has the expected structure
+      if (data.ownedNfts) {
+        data.ownedNfts = data.ownedNfts.map((nft: any) => ({
+          ...nft,
+          media: nft.media || [], // Ensure media is always an array
+          metadata: nft.metadata || {}, // Ensure metadata is always an object
+        }))
+      }
+      
       return data
     } catch (error) {
       console.error('Error fetching NFTs from Alchemy:', error)

@@ -36,8 +36,16 @@ export default function HomePage() {
     try {
       console.log(`Fetching NFTs for chain ID: ${chainId}`)
       const response = await nftService.getNFTsForOwner(address, { chainId })
+      console.log(`Found ${response.ownedNfts.length} NFTs:`, response.ownedNfts)
+      
+      // Debug: log the structure of the first NFT if any exist
+      if (response.ownedNfts.length > 0) {
+        console.log('First NFT structure:', response.ownedNfts[0])
+        console.log('First NFT media:', response.ownedNfts[0].media)
+        console.log('First NFT metadata:', response.ownedNfts[0].metadata)
+      }
+      
       setNfts(response.ownedNfts)
-      console.log(`Found ${response.ownedNfts.length} NFTs`)
     } catch (error) {
       console.error('Error fetching NFTs:', error)
     } finally {
@@ -64,7 +72,7 @@ export default function HomePage() {
       contract: nft.contract.address,
       tokenId: nft.tokenId,
       name: nft.title || nft.metadata?.name || `NFT #${nft.tokenId}`,
-      image: nft.media[0]?.gateway || nft.metadata?.image || '',
+      image: nft.media?.[0]?.gateway || nft.media?.[0]?.raw || nft.metadata?.image || '',
     })
     router.push(`/generate?${params.toString()}`)
   }
